@@ -2265,13 +2265,7 @@ const defaultData = {
   ]
 };
 
-let data = pa_loadData();
 
-function pa_loadData() {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored) { try { return JSON.parse(stored); } catch(e) {} }
-  return JSON.parse(JSON.stringify(defaultData));
-}
 
 
 
@@ -2283,13 +2277,6 @@ function pa_resetData() {
   pa_showStatus('✦ Ripristinato');
 }
 
-function pa_switchTab(ev, id) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  ev.target.classList.add('active');
-  document.getElementById(id).classList.add('active');
-  pa_render();
-}
 
 function pa_exportJSON() {
   pa_saveData();
@@ -2393,51 +2380,7 @@ function pa_switchComp(ev, comp) {
   });
 }
 
-function pa_renderStagioni() {
-  const wrap = document.getElementById('stagioni');
-  wrap.innerHTML = '';
-  const filtered = data.stagioni.filter(s => s.comp === activeComp);
-  if (filtered.length === 0) {
-    wrap.innerHTML = '<p style="color:var(--text2);font-style:italic;font-family:\'EB Garamond\',serif;padding:20px 0">Nessuna stagione registrata per questa competizione.</p>';
-    return;
-  }
-  const CPALET = {
-    NBA: { border:'#C49A22', hbg:'rgba(196,154,34,.35)', hcol:'#F0C040', tbg:'rgba(180,140,10,.06)' },
-    GL:  { border:'#4080cc', hbg:'rgba(0,60,180,.4)',    hcol:'#90c0ff', tbg:'rgba(0,60,180,.06)'   },
-    IT:  { border:'#00aa00', hbg:'rgba(0,120,0,.4)',      hcol:'#90ff90', tbg:'rgba(0,100,0,.06)'    },
-    PR:  { border:'#9040cc', hbg:'rgba(120,0,160,.4)',    hcol:'#d090ff', tbg:'rgba(120,0,140,.06)'  },
-  };
 
-  filtered.forEach((s) => {
-    const i = data.stagioni.indexOf(s);
-    const showRec = s.comp !== 'IT';
-    const showPt  = s.comp !== 'IT' && s.comp !== 'PR';
-    const cp = CPALET[s.comp] || CPALET.NBA;
-    const div = document.createElement('div');
-    div.className = 'stagione';
-    div.innerHTML = `<table style="border:1px solid ${cp.border};background:${cp.tbg}">
-      <tr><th colspan="2" style="background:${cp.hbg};color:${cp.hcol};font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;text-align:center;padding:8px 10px;border-bottom:1px solid ${cp.border}"><button class="btn-del" onclick="pa_deleteStagione(${i})" title="Elimina">✕</button>${pa_ed(s.anno,`stagioni.${i}.anno`)}</th></tr>
-      <tr><th class="s-primo">🥇 Primo</th><td class="s-primo s-val">${pa_ed(s.primo,`stagioni.${i}.primo`)}</td></tr>
-      ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${pa_ed(s.primoRec,`stagioni.${i}.primoRec`)}</td></tr>` : ''}
-      ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${pa_ed(s.primoPt,`stagioni.${i}.primoPt`)}</td></tr>` : ''}
-      <tr><th class="s-secondo">🥈 Secondo</th><td class="s-secondo s-val">${pa_ed(s.secondo,`stagioni.${i}.secondo`)}</td></tr>
-      ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${pa_ed(s.secondoRec,`stagioni.${i}.secondoRec`)}</td></tr>` : ''}
-      ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${pa_ed(s.secondoPt,`stagioni.${i}.secondoPt`)}</td></tr>` : ''}
-      <tr><th class="s-terzo">🥉 Terzo</th><td class="s-terzo s-val">${pa_ed(s.terzo,`stagioni.${i}.terzo`)}</td></tr>
-      ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${pa_ed(s.terzoRec,`stagioni.${i}.terzoRec`)}</td></tr>` : ''}
-      ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${pa_ed(s.terzoPt,`stagioni.${i}.terzoPt`)}</td></tr>` : ''}
-    </table>`;
-    wrap.appendChild(div);
-  });
-}
-
-function pa_render() {
-  pa_renderRiepilogo();
-  pa_renderStagioni();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => {
-    el.addEventListener('blur', () => pa_saveData());
-  });
-}
 
 // Calcola rank al caricamento iniziale
 pa_saveData(false);
@@ -2528,8 +2471,8 @@ function pa_resetData() {
 }
 
 function pa_switchTab(ev, id) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#sec-palmares .tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#sec-palmares .tab-panel').forEach(p => p.classList.remove('active'));
   ev.target.classList.add('active');
   document.getElementById(id).classList.add('active');
   pa_render();
@@ -2563,38 +2506,6 @@ function pa_compBadge(comp) {
   return `<span class="comp-badge" style="${style}">${comp||''}</span>`;
 }
 
-function pa_renderRiepilogo() {
-  const t = document.getElementById('riepilogo');
-  while (t.rows.length > 2) t.deleteRow(2);
-  paData.riepilogo.forEach((r, i) => {
-    const tr = t.insertRow();
-    const rn = parseInt(r.rank)||0; const rc = rn===1?'rank-1':rn===2?'rank-2':rn===3?'rank-3':'';
-    tr.className = rc;
-    tr.innerHTML = `
-      <td style="position:relative;font-family:'Cinzel',serif;font-weight:800;text-align:center">${pa_ed(r.rank,`riepilogo.${i}.rank`)}<button class="btn-del" onclick="pa_deleteGiocatore(${i})" title="Elimina" style="position:absolute;top:1px;right:1px;font-size:9px">✕</button></td>
-      <td style="text-align:left;font-style:italic">${pa_ed(r.nome, `riepilogo.${i}.nome`)}</td>
-      <td style="text-align:center;font-size:15px;letter-spacing:2px;color:var(--gold)">${pa_ed(r.anelli,`riepilogo.${i}.anelli`)}</td>
-      <td>${pa_ed(r.nba[1], `riepilogo.${i}.nba.1`)}</td>
-      <td>${pa_ed(r.nba[2], `riepilogo.${i}.nba.2`)}</td>
-      <td class="pos-val">${pa_ed(r.gl[0], `riepilogo.${i}.gl.0`)}</td>
-      <td>${pa_ed(r.gl[1], `riepilogo.${i}.gl.1`)}</td>
-      <td>${pa_ed(r.gl[2], `riepilogo.${i}.gl.2`)}</td>
-      <td class="pos-val">${pa_ed(r.it[0], `riepilogo.${i}.it.0`)}</td>
-      <td>${pa_ed(r.it[1], `riepilogo.${i}.it.1`)}</td>
-      <td>${pa_ed(r.it[2], `riepilogo.${i}.it.2`)}</td>
-      <td class="pos-val">${pa_ed(r.pr[0], `riepilogo.${i}.pr.0`)}</td>
-      <td>${pa_ed(r.pr[1], `riepilogo.${i}.pr.1`)}</td>
-      <td>${pa_ed(r.pr[2], `riepilogo.${i}.pr.2`)}</td>
-      <td class="pos-val">${pa_ed(r.mit,      `riepilogo.${i}.mit`)}</td>
-      <td class="pos-val">${pa_ed(r.sd,       `riepilogo.${i}.sd`)}</td>
-      <td class="ind-val">${pa_ed(r.mvp,      `riepilogo.${i}.mvp`)}</td>
-      <td class="ind-val">${pa_ed(r.dpoy,     `riepilogo.${i}.dpoy`)}</td>
-      <td class="ind-val">${pa_ed(r.topscorer,`riepilogo.${i}.topscorer`)}</td>
-      <td class="neg-val">${pa_ed(r.bd,       `riepilogo.${i}.bd`)}</td>
-      <td class="neg-val">${pa_ed(r.mdt,      `riepilogo.${i}.mdt`)}</td>
-    `;
-  });
-}
 
 let PA_activeComp = 'NBA';
 
