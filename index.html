@@ -2588,41 +2588,29 @@ function p_saveData(x) {
 
 // ── ADMIN GUARD ALBO D'ORO ────────────────────────────────────────────
 // Inietta CSS readonly permanente nel document
-(function(){
-  var style = document.createElement('style');
-  style.id = 'palm-guard-style';
-  style.textContent =
-    'body:not(.palm-admin) #sec-palmares [contenteditable]' +
-    '{pointer-events:none!important;user-select:none!important;cursor:default!important;outline:none!important}' +
-    'body:not(.palm-admin) #sec-palmares .btn-add,' +
-    'body:not(.palm-admin) #sec-palmares .btn-del' +
-    '{display:none!important;visibility:hidden!important}';
-  document.head.appendChild(style);
-})();
 
-function p_setAdminMode(admin) {
-  if (admin) {
-    document.body.classList.add('palm-admin');
-    // Abilita contenteditable su tutti i campi esistenti
-    document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){
-      el.contentEditable = 'true';
-    });
-    if (typeof p_render === 'function') p_render();
-  } else {
-    document.body.classList.remove('palm-admin');
-  }
-}
 
 function p_applyReadonly() {
-  // Non serve fare nulla — il CSS body:not(.palm-admin) gestisce tutto
-  if (!isAdmin) {
-    document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){
-      el.contentEditable = 'false';
-    });
-  }
+  var admin = isAdmin;
+  // Contenteditable
+  document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){
+    el.contentEditable = admin ? 'true' : 'false';
+    el.style.cursor = admin ? 'text' : 'default';
+    el.style.pointerEvents = admin ? '' : 'none';
+  });
+  // Bottoni add/delete
+  document.querySelectorAll('#sec-palmares .btn-add, #sec-palmares .btn-del').forEach(function(b){
+    b.style.display = admin ? '' : 'none';
+  });
 }
 
-// Wrap render functions per mantenere readonly dopo ogni re-render
+function p_setAdminMode(admin) {
+  // Forza re-render e applica stato corretto
+  if (typeof p_render === 'function') p_render();
+  p_applyReadonly();
+}
+
+// Wrap render functions per riaplicare sempre readonly dopo ogni re-render
 (function(){
   var _origRender = p_render;
   p_render = function() { _origRender(); p_applyReadonly(); };
@@ -2819,7 +2807,7 @@ function p_addStagione() {
   pData.stagioni.unshift({ comp: pActiveComp, anno: '', primo:'', primoRec:'', primoPt:'', secondo:'', secondoRec:'', secondoPt:'', terzo:'', terzoRec:'', terzoPt:'' });
   p_saveData();
   p_renderStagioni();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
+  document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){ el.addEventListener('blur', function(){ p_saveData(); }); });
 }
 
 function p_deleteStagione(idx) {
@@ -2827,14 +2815,14 @@ function p_deleteStagione(idx) {
   pData.stagioni.splice(idx, 1);
   p_saveData();
   p_renderStagioni();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
+  document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){ el.addEventListener('blur', function(){ p_saveData(); }); });
 }
 
 function p_addGiocatore() {
   pData.riepilogo.unshift({ rank:'', nome:'', anelli:'', nba:['','',''], gl:['','',''], it:['','',''], pr:['','',''], mit:'', sd:'', mvp:'', dpoy:'', topscorer:'', bd:'', mdt:'' });
   p_saveData();
   p_renderRiepilogo();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
+  document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){ el.addEventListener('blur', function(){ p_saveData(); }); });
 }
 
 function p_deleteGiocatore(idx) {
@@ -2842,7 +2830,7 @@ function p_deleteGiocatore(idx) {
   pData.riepilogo.splice(idx, 1);
   p_saveData();
   p_renderRiepilogo();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
+  document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){ el.addEventListener('blur', function(){ p_saveData(); }); });
 }
 
 const COMP_UI = {
