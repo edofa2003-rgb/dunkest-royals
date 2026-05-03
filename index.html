@@ -2272,39 +2272,7 @@ function pa_loadData() {
   return JSON.parse(JSON.stringify(defaultData));
 }
 
-function pa_saveData(triggerRerender) {
-  document.querySelectorAll('[data-pa-path]').forEach(el => {
-    const path = el.dataset.paPath.split('.');
-    let obj = data;
-    for (let i = 0; i < path.length - 1; i++) {
-      const key = isNaN(path[i]) ? path[i] : parseInt(path[i]);
-      obj = obj[key];
-    }
-    const last = path[path.length-1];
-    obj[isNaN(last) ? last : parseInt(last)] = el.innerText.trim();
-  });
 
-  // Ordina per rank crescente (numerico, poi alfabetico per parità)
-  paData.riepilogo.sort((a, b) => {
-    const ra = parseInt(a.rank) || 999;
-    const rb = parseInt(b.rank) || 999;
-    return ra - rb;
-  });
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  pa_showStatus('✦ Salvato');
-
-  // Se siamo sul tab palmares, ri-renderizza per aggiornare ordine e colori
-  if (triggerRerender !== false) {
-    const panel = document.getElementById('panel-palmares');
-    if (panel && panel.classList.contains('active')) {
-      pa_renderRiepilogo();
-      document.querySelectorAll('#riepilogo [contenteditable="true"]').forEach(el => {
-        el.addEventListener('blur', () => pa_saveData());
-      });
-    }
-  }
-}
 
 function pa_resetData() {
   if (!confirm('Ripristinare i dati di default?')) return;
@@ -2387,35 +2355,9 @@ function pa_renderRiepilogo() {
 
 let activeComp = 'NBA';
 
-function pa_addStagione() {
-  paData.stagioni.unshift({ comp: PA_activeComp, anno: '', primo:'', primoRec:'', primoPt:'', secondo:'', secondoRec:'', secondoPt:'', terzo:'', terzoRec:'', terzoPt:'' });
-  pa_saveData();
-  pa_renderStagioni();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
-}
 
-function pa_deleteStagione(idx) {
-  if (!confirm('Eliminare questa stagione?')) return;
-  paData.stagioni.splice(idx, 1);
-  pa_saveData();
-  pa_renderStagioni();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
-}
 
-function pa_addGiocatore() {
-  paData.riepilogo.unshift({ rank:'', nome:'', anelli:'', nba:['','',''], gl:['','',''], it:['','',''], pr:['','',''], mit:'', sd:'', mvp:'', dpoy:'', topscorer:'', bd:'', mdt:'' });
-  pa_saveData();
-  pa_renderRiepilogo();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
-}
 
-function pa_deleteGiocatore(idx) {
-  if (!confirm('Eliminare questo giocatore?')) return;
-  paData.riepilogo.splice(idx, 1);
-  pa_saveData();
-  pa_renderRiepilogo();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
-}
 
 const COMP_UI = {
   NBA: { border:'#C49A22', bg:'rgba(196,154,34,.08)', btnBg:'linear-gradient(180deg,#3a2e00,#1a1500)', btnColor:'#F0C040', btnBorder:'#C49A22' },
@@ -2543,6 +2485,7 @@ function pa_loadData() {
 }
 
 function pa_saveData(triggerRerender) {
+  if (!(typeof isAdmin !== "undefined" && isAdmin)) { pa_showStatus("🔒 Solo admin"); return; }
   document.querySelectorAll('[data-pa-path]').forEach(el => {
     const path = el.dataset.paPath.split('.');
     let obj = paData;
@@ -2655,35 +2598,9 @@ function pa_renderRiepilogo() {
 
 let PA_activeComp = 'NBA';
 
-function pa_addStagione() {
-  paData.stagioni.unshift({ comp: PA_activeComp, anno: '', primo:'', primoRec:'', primoPt:'', secondo:'', secondoRec:'', secondoPt:'', terzo:'', terzoRec:'', terzoPt:'' });
-  pa_saveData();
-  pa_renderStagioni();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', pa_saveData));
-}
 
-function pa_deleteStagione(idx) {
-  if (!confirm('Eliminare questa stagione?')) return;
-  paData.stagioni.splice(idx, 1);
-  pa_saveData();
-  pa_renderStagioni();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', pa_saveData));
-}
 
-function pa_addGiocatore() {
-  paData.riepilogo.unshift({ rank:'', nome:'', anelli:'', nba:['','',''], gl:['','',''], it:['','',''], pr:['','',''], mit:'', sd:'', mvp:'', dpoy:'', topscorer:'', bd:'', mdt:'' });
-  pa_saveData();
-  pa_renderRiepilogo();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', pa_saveData));
-}
 
-function pa_deleteGiocatore(idx) {
-  if (!confirm('Eliminare questo giocatore?')) return;
-  paData.riepilogo.splice(idx, 1);
-  pa_saveData();
-  pa_renderRiepilogo();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', pa_saveData));
-}
 
 const PA_COMP_UI = {
   NBA: { border:'#C49A22', bg:'rgba(196,154,34,.08)', btnBg:'linear-gradient(180deg,#3a2e00,#1a1500)', btnColor:'#F0C040', btnBorder:'#C49A22' },
@@ -2770,57 +2687,19 @@ pa_render();
 pa_applyCompColors(PA_activeComp);
 
 
-// ═══════════════════════════════════════════════════════════════
-// PALMARES ADMIN GUARD
-// ═══════════════════════════════════════════════════════════════
-function pa_applyGuard() {
-  var ok = (typeof isAdmin !== 'undefined') && isAdmin;
-  document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el) {
-    el.contentEditable = ok ? 'true' : 'false';
-    el.style.pointerEvents = ok ? '' : 'none';
-    el.style.cursor = ok ? 'text' : 'default';
-  });
-  document.querySelectorAll('#sec-palmares .btn-add, #sec-palmares .btn-del').forEach(function(b) {
-    b.style.display = ok ? '' : 'none';
-    b.style.visibility = ok ? '' : 'hidden';
-  });
 }
 
-// Override pa_saveData to block non-admin writes
-var _pa_save_real = pa_saveData;
-pa_saveData = function(x) {
-  var ok = (typeof isAdmin !== 'undefined') && isAdmin;
-  if (!ok) { pa_showStatus('🔒 Solo admin'); return; }
-  _pa_save_real(x);
-};
 
-// Wrap renders so guard is always re-applied
+
+// Wrap renders to always re-apply guard
 (function() {
   var _r  = pa_render;
   var _rR = pa_renderRiepilogo;
   var _rS = pa_renderStagioni;
-  pa_render = function() {
-    if (_r) _r();
-    pa_applyGuard();
-  };
-  pa_renderRiepilogo = function() {
-    if (_rR) _rR();
-    pa_applyGuard();
-  };
-  pa_renderStagioni = function() {
-    if (_rS) _rS();
-    pa_applyGuard();
-  };
+  pa_render = function() { if(_r) _r(); pa_applyGuard(); };
+  pa_renderRiepilogo = function() { if(_rR) _rR(); pa_applyGuard(); };
+  pa_renderStagioni = function() { if(_rS) _rS(); pa_applyGuard(); };
 })();
-
-// Called by main site after admin login
-function pa_setAdminMode(isAdminNow) {
-  pa_applyGuard();
-  if (isAdminNow) {
-    pa_render();
-  }
-}
-
 
 // Init Palmares
 (function() {
@@ -2865,6 +2744,100 @@ pa_saveData = function(x) {
       .catch(function(e) { pa_ignoreNext = false; pa_showStatus('❌ ' + e.message); });
   }
 };
+
+// ═══════════════════════════════════════════════════════
+// PALMARES - FUNZIONI PULITE
+// ═══════════════════════════════════════════════════════
+
+// pa_persistData: salva paData DIRETTAMENTE senza leggere dal DOM
+function pa_persistData() {
+  var ok = (typeof isAdmin !== 'undefined') && isAdmin;
+  if (!ok) { pa_showStatus('🔒 Solo admin'); return; }
+  localStorage.setItem(PA_STORAGE_KEY, JSON.stringify(paData));
+  pa_showStatus('✅ Salvato');
+  if (typeof pa_dbRef !== 'undefined' && pa_dbRef) {
+    if (typeof pa_ignoreNext !== 'undefined') pa_ignoreNext = true;
+    pa_dbRef.set(JSON.parse(JSON.stringify(paData)))
+      .catch(function(e) { if (typeof pa_ignoreNext !== 'undefined') pa_ignoreNext = false; });
+  }
+}
+
+function pa_addGiocatore() {
+  if (!(typeof isAdmin !== 'undefined' && isAdmin)) return;
+  if (!confirm('Aggiungere un nuovo giocatore?')) return;
+  paData.riepilogo.unshift({ rank:'', nome:'', anelli:'', nba:['','',''], gl:['','',''], it:['','',''], pr:['','',''], mit:'', sd:'', mvp:'', dpoy:'', topscorer:'', bd:'', mdt:'' });
+  pa_persistData();
+  pa_renderRiepilogo();
+  pa_applyGuard();
+}
+
+function pa_deleteGiocatore(idx) {
+  if (!(typeof isAdmin !== 'undefined' && isAdmin)) return;
+  if (!confirm('Eliminare questo giocatore?')) return;
+  paData.riepilogo.splice(idx, 1);
+  pa_persistData();
+  pa_renderRiepilogo();
+  pa_applyGuard();
+}
+
+function pa_addStagione() {
+  if (!(typeof isAdmin !== 'undefined' && isAdmin)) return;
+  if (!confirm('Aggiungere una nuova stagione?')) return;
+  paData.stagioni.unshift({ comp: PA_activeComp, anno: '', primo:'', primoRec:'', primoPt:'', secondo:'', secondoRec:'', secondoPt:'', terzo:'', terzoRec:'', terzoPt:'' });
+  pa_persistData();
+  pa_renderStagioni();
+  pa_applyGuard();
+}
+
+function pa_deleteStagione(idx) {
+  if (!(typeof isAdmin !== 'undefined' && isAdmin)) return;
+  if (!confirm('Eliminare questa stagione?')) return;
+  paData.stagioni.splice(idx, 1);
+  pa_persistData();
+  pa_renderStagioni();
+  pa_applyGuard();
+}
+
+// Admin guard
+function pa_applyGuard() {
+  var ok = (typeof isAdmin !== 'undefined') && isAdmin;
+  document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el) {
+    el.contentEditable = ok ? 'true' : 'false';
+    el.style.pointerEvents = ok ? '' : 'none';
+    el.style.cursor = ok ? 'text' : 'default';
+  });
+  document.querySelectorAll('#sec-palmares .btn-add, #sec-palmares .btn-del').forEach(function(b) {
+    b.style.display = ok ? '' : 'none';
+    b.style.visibility = ok ? 'visible' : 'hidden';
+  });
+}
+
+function pa_setAdminMode(isAdminNow) {
+  pa_render();
+  pa_applyGuard();
+}
+
+// Firebase sync for Palmares
+var pa_dbRef = null;
+var pa_ignoreNext = false;
+function pa_initFirebase() {
+  try {
+    if (!window.firebase || !firebase.apps || !firebase.apps.length) return;
+    var db = firebase.database(firebase.apps[0]);
+    pa_dbRef = db.ref('palmares');
+    pa_dbRef.on('value', function(snap) {
+      if (pa_ignoreNext) { pa_ignoreNext = false; return; }
+      var d = snap.val();
+      if (d) {
+        paData = d;
+        pa_render();
+        pa_applyGuard();
+      }
+    });
+  } catch(e) { console.warn('PA Firebase:', e); }
+}
+setTimeout(pa_initFirebase, 2000);
+
 </script>
 
 </body></html>
