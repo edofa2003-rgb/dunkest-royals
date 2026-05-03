@@ -3,8 +3,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dunkest Royals</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;600;700&family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
 <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
 
   :root {
@@ -103,103 +105,7 @@
   #readonly-banner { display:none; }
   body.readonly #readonly-banner { display:flex; }
 
-  /* ── IN-SEASON TOURNAMENT THEME ── */
-  #sec-tournament {
-    background: linear-gradient(160deg, #0a1628 0%, #0d1f3c 40%, #091525 100%);
-    min-height: calc(100vh - 118px);
-  }
-  #sec-tournament .tabs {
-    background: linear-gradient(90deg, #0d1f3c, #112244, #0d1f3c);
-    border-bottom: 2px solid #C8102E;
-    position: relative;
-  }
-  #sec-tournament .tabs::before {
-    content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
-    background: linear-gradient(90deg, #C8102E, #ff4060, #C8102E);
-  }
-  #sec-tournament .tab {
-    color: rgba(255,255,255,.5);
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    letter-spacing: .1em;
-  }
-  #sec-tournament .tab.active {
-    color: #fff;
-    background: rgba(200,16,46,.2);
-    border-bottom: 3px solid #C8102E;
-    text-shadow: 0 0 20px rgba(200,16,46,.6);
-  }
-  #sec-tournament .tab:hover { background: rgba(29,66,138,.25); color: #fff; }
-  #sec-tournament .panel { padding: 20px 24px; }
-  #sec-tournament h2 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 26px;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: #fff;
-    border-bottom: 2px solid #C8102E;
-    padding-bottom: 6px;
-    text-shadow: 0 0 30px rgba(200,16,46,.4);
-  }
-  #sec-tournament h3 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 16px;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    color: #90b8ff;
-  }
-  #sec-tournament .card {
-    background: linear-gradient(135deg, #0d1f3c, #0a1628);
-    border: 1px solid #1e3a6e;
-    border-top: 2px solid #1D428A;
-    box-shadow: 0 4px 16px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.05);
-  }
-  #sec-tournament table {
-    background: rgba(13,31,60,.6);
-    border: 1px solid #1e3a6e;
-  }
-  #sec-tournament th {
-    background: linear-gradient(90deg, #1D428A, #152f6a);
-    color: #fff;
-    border-color: #1e3a6e;
-    letter-spacing: .08em;
-  }
-  #sec-tournament td { border-color: #1a2e54; color: #d0e0ff; }
-  #sec-tournament .match { border-bottom-color: #1a2e54; }
-  #sec-tournament .match .team.win { color: #4ade80; }
-  #sec-tournament .match .vs { color: #2a4070; }
-  #sec-tournament .small { color: #6080b0; }
-  /* Bracket cards */
-  #sec-tournament .vb-match {
-    background: linear-gradient(135deg, #0d1f3c, #091525);
-    border: 1px solid #1e3a6e;
-  }
-  #sec-tournament .vb-lbl { background: #071020; color: #4060a0; border-bottom-color: #1a2e54; }
-  #sec-tournament .vb-win { background: rgba(29,66,138,.4); color: #60a5fa; }
-  #sec-tournament input.vb-sc { background: #071020; border-color: #1a2e54; color: #d0e0ff; }
-  #sec-tournament .vb-col-hdr { color: #4080cc; }
-  /* Qualified rows */
-  #sec-tournament .qualified  { background: rgba(29,66,138,.35) !important; border-left: 3px solid #1D428A !important; }
-  #sec-tournament .qualified2 { background: rgba(29,66,138,.15) !important; border-left: 3px solid rgba(29,66,138,.5) !important; }
-  /* Inputs */
-  #sec-tournament input[type="text"],
-  #sec-tournament input[type="number"] {
-    background: rgba(7,16,32,.8);
-    border-color: #1e3a6e;
-    color: #d0e0ff;
-  }
-  #sec-tournament input:focus { border-color: #1D428A; outline-color: #1D428A; }
-  /* Buttons inside tournament */
-  #sec-tournament button:not(.secondary):not(.blue):not(.vb-sc) {
-    background: linear-gradient(135deg, #C8102E, #a00020);
-    box-shadow: 0 2px 8px rgba(200,16,46,.4);
-  }
-  #sec-tournament button.blue { background: linear-gradient(135deg, #1D428A, #152f6a); }
-  #sec-tournament .series { background: rgba(13,31,60,.6); border-color: #1e3a6e; }
-  /* SVG connector lines color */
-  #sec-tournament svg line { stroke: #1e3a6e !important; }
+  /* ── HOME NAV ── */
   .home-nav { display:flex; gap:0; background:var(--bg2,#0f0f1a); border-bottom:2px solid #C8102E; padding:0 20px; flex-wrap:wrap; }
   .home-nav .hn-tab { padding:12px 24px; cursor:pointer; color:#9090b0; font-family:"Barlow Condensed",sans-serif; font-weight:700; font-size:16px; letter-spacing:.07em; text-transform:uppercase; border-bottom:3px solid transparent; margin-bottom:-2px; transition:all .15s; }
   .home-nav .hn-tab:hover { color:#fff; background:rgba(200,16,46,.08); }
@@ -268,8 +174,8 @@
     <input id="importer" type="file" accept=".json" style="display:none" onchange="importJSON(event)">
     <button class="secondary" onclick="if(confirm(&#39;Resettare tutto?&#39;)){resetAll();}">↺ Reset</button>
     <button id="btn-admin-login" onclick="openAdminModal()">🔐 Accedi Admin</button>
-    <span id="mode-badge" style="font-size:11px;padding:4px 10px;background:rgba(255,255,255,.1);border-radius:4px;color:#fff;font-family:&#39;Barlow Condensed&#39;,sans-serif;font-weight:700;letter-spacing:.05em"></span>
-    <span id="sync-status" style="font-size: 11px; color: rgb(248, 113, 113); font-family: &quot;Barlow Condensed&quot;, sans-serif; min-width: 100px; text-align: right; font-weight: 700;"></span>
+    <span id="mode-badge" style="font-size:11px;padding:4px 10px;background:rgba(255,255,255,.1);border-radius:4px;color:#fff;font-family:&#39;Barlow Condensed&#39;,sans-serif;font-weight:700;letter-spacing:.05em">👁 Solo lettura</span>
+    <span id="sync-status" style="font-size: 11px; color: rgb(248, 113, 113); font-family: &quot;Barlow Condensed&quot;, sans-serif; min-width: 100px; text-align: right; font-weight: 700;">❌ Errore Firebase: firebase is not defined</span>
   </div>
 </div>
 
@@ -293,7 +199,7 @@
 <div class="home-nav">
   <div class="hn-tab active" onclick="showSection(event,&#39;sec-tournament&#39;)">🏀 In-Season Tournament</div>
   <div class="hn-tab" onclick="showSection(event,&#39;sec-calc&#39;)">🔄 Calcolatore Trade</div>
-  <div class="hn-tab" onclick="showSection(event,&#39;sec-palmares&#39;)">🏆 Albo d'Oro</div>
+  <div class="hn-tab" onclick="showSection(event,'sec-palmares')">🏆 Albo d'Oro</div>
 </div>
 
 <!-- ════════ SECTION 1: TOURNAMENT ════════ -->
@@ -1356,30 +1262,13 @@ let isAdmin = false;
 let saveTimeout = null;
 let ignoreNextUpdate = false;
 
-function loadFirebaseSDK() {
-  return new Promise(function(resolve) {
-    if (typeof firebase !== 'undefined') { resolve(); return; }
-    var s1 = document.createElement('script');
-    s1.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
-    s1.onload = function() {
-      var s2 = document.createElement('script');
-      s2.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js';
-      s2.onload = resolve;
-      s2.onerror = resolve; // continua anche se fallisce
-      document.head.appendChild(s2);
-    };
-    s1.onerror = resolve;
-    document.head.appendChild(s1);
-  });
-}
-
-function initFirebaseCore() {
+function initFirebase() {
   try {
-    if (typeof firebase === 'undefined') {
-      showStatus('⚠️ Firebase non disponibile — modalità offline', 'warn');
-      renderAll();
-      return;
+    if (FIREBASE_CONFIG.apiKey === 'INSERISCI_API_KEY') {
+      showStatus('⚠️ Firebase non configurato — modalità offline', 'warn');
+      return false;
     }
+    // Evita "App already exists" in caso di hot-reload
     const app = firebase.apps.length
       ? firebase.apps[0]
       : firebase.initializeApp(FIREBASE_CONFIG);
@@ -1391,43 +1280,40 @@ function initFirebaseCore() {
       const data = snapshot.val();
       if (data) {
         state = data;
+        // Retrocompat dopo caricamento da Firebase
         if(!state.knockout.rounds) state.knockout.rounds = Array.from({length:8},()=>({a:null,b:null,scoreA:0,scoreB:0,bestOf:3,games:[]}));
         ['rounds','quarters','semis'].forEach(k=>state.knockout[k].forEach(s=>{if(!s.games)s.games=[];}));
         ['final','third'].forEach(k=>{if(!state.knockout[k].games)state.knockout[k].games=[];});
         renderAll();
         showStatus('🟢 Aggiornato', 'ok');
-      } else {
-        renderAll();
       }
     });
 
     showStatus('🟢 Connesso', 'ok');
-    // Avvia anche Firebase per Albo d'Oro
-    setTimeout(p_initFirebase, 500);
+    return true;
   } catch(e) {
-    showStatus('❌ Errore: ' + e.message, 'err');
-    renderAll();
+    showStatus('❌ Errore Firebase: ' + e.message, 'err');
+    return false;
   }
-}
-
-function initFirebase() {
-  loadFirebaseSDK().then(initFirebaseCore);
-  return true;
 }
 
 function save() {
   localStorage.setItem('dunkest', JSON.stringify(state));
   if (!isAdmin) { showStatus('🔒 Solo lettura', 'warn', 3000); return; }
-  if (!dbRef) { showStatus('⚠️ Firebase non connesso', 'warn', 3000); return; }
+  if (!dbRef) {
+    showStatus('⚠️ Firebase non connesso — dati solo locali', 'warn', 5000);
+    return;
+  }
   showStatus('💾 Salvataggio...', 'warn', 0);
   clearTimeout(saveTimeout);
   saveTimeout = setTimeout(() => {
     ignoreNextUpdate = true;
     dbRef.set(JSON.parse(JSON.stringify(state)))
-      .then(() => showStatus('✅ Salvato', 'ok', 4000))
+      .then(() => showStatus('✅ Salvato su Firebase', 'ok', 4000))
       .catch(e => {
         ignoreNextUpdate = false;
         showStatus('❌ Errore: ' + e.message, 'err', 0);
+        console.error('Firebase save error:', e);
       });
   }, 300);
 }
@@ -1969,8 +1855,7 @@ function doAdminLogin() {
     closeAdminModal();
     showStatus('✅ Accesso admin', 'ok');
     renderAll();
-    // Sblocca anche Albo d'Oro
-    if (typeof p_setAdminMode === 'function') p_setAdminMode(true);
+    if (typeof pa_setAdminMode === "function") pa_setAdminMode(true);
   } else {
     document.getElementById('admin-err').textContent = '❌ Password errata';
     document.getElementById('admin-pwd').select();
@@ -2000,14 +1885,17 @@ buildTable('tabella2', 's2', false);
 recalc();
 
 // 5. Firebase + render torneo
-initFirebase();
+const firebaseOk = initFirebase();
+if (!firebaseOk) {
+  renderAll();
+}
 </script>
 
 
 
-<!-- ════════ SECTION 3: ALBO D'ORO ════════ -->
+<!-- ═══════════ SECTION 3: ALBO D'ORO ═══════════ -->
 <style>
-#sec-palmares { font-family: 'EB Garamond', Georgia, serif; color: #F0E8C8; }
+#sec-palmares { font-family: 'EB Garamond', Georgia, serif; }
 
   :root {
     --gold:      #D4AF37;
@@ -2263,6 +2151,8 @@ initFirebase();
 #sec-palmares .tab.active { color:var(--gold-light); border-bottom:2px solid var(--gold); background:rgba(212,175,55,.08); }
 #sec-palmares .tab-panel { display:none; }
 #sec-palmares .tab-panel.active { display:block; }
+/* Hide edit elements for guests */
+#sec-palmares .btn-add, #sec-palmares .btn-del { display: none; }
 </style>
 
 <div id="sec-palmares" class="home-section">
@@ -2274,12 +2164,17 @@ initFirebase();
   <div class="header-title">🏆 Albo d'Oro</div>
   <div class="header-sub">Palmarès ufficiale — Dunkest Royals</div>
   <div class="gold-rule"></div>
-  
+  <div class="toolbar">
+    <button onclick="pa_saveData()">💾 Salva</button>
+    <button onclick="pa_resetData()">↺ Reset</button>
+    <button onclick="pa_exportJSON()">⬇ Esporta JSON</button>
+    <span id="status"></span>
+  </div>
 </header>
 
 <div class="tabs">
-  <div class="tab active" onclick="p_switchTab(event,'panel-palmares')">Palmarès</div>
-  <div class="tab" onclick="p_switchTab(event,'panel-stagioni')">Storico Stagioni</div>
+  <div class="tab active" onclick="pa_switchTab(event,'panel-palmares')">Palmarès</div>
+  <div class="tab" onclick="pa_switchTab(event,'panel-stagioni')">Storico Stagioni</div>
 </div>
 
 <main>
@@ -2322,19 +2217,19 @@ initFirebase();
 
   </div>
   <div style="margin-top:12px">
-    <button class="btn-add" onclick="p_addGiocatore()">＋ Aggiungi giocatore</button>
+    <button class="btn-add" onclick="pa_addGiocatore()">＋ Aggiungi giocatore</button>
   </div>
   <div id="panel-stagioni" class="tab-panel">
   <div class="section-title">Storico Stagioni</div>
   <div class="section-rule"></div>
   <div class="comp-tabs">
-    <div class="comp-tab active" data-comp="NBA" onclick="p_switchComp(event,'NBA')">NBA</div>
-    <div class="comp-tab" data-comp="GL" onclick="p_switchComp(event,'GL')">G League</div>
-    <div class="comp-tab" data-comp="IT" onclick="p_switchComp(event,'IT')">In-Season Tournament</div>
-    <div class="comp-tab" data-comp="PR" onclick="p_switchComp(event,'PR')">Points Race</div>
+    <div class="comp-tab active" data-comp="NBA" onclick="pa_switchComp(event,'NBA')">NBA</div>
+    <div class="comp-tab" data-comp="GL" onclick="pa_switchComp(event,'GL')">G League</div>
+    <div class="comp-tab" data-comp="IT" onclick="pa_switchComp(event,'IT')">In-Season Tournament</div>
+    <div class="comp-tab" data-comp="PR" onclick="pa_switchComp(event,'PR')">Points Race</div>
   </div>
   <div style="margin-top:4px">
-    <button id="btn-add-stagione" class="btn-add" onclick="p_addStagione()">＋ Aggiungi stagione</button>
+    <button id="btn-add-stagione" class="btn-add" onclick="pa_addStagione()">＋ Aggiungi stagione</button>
   </div>
   <div id="stagioni-container" style="border:1px solid transparent;border-radius:6px;padding:16px;margin-top:8px;transition:border-color .2s,background .2s"><div class="stagioni-wrap" id="stagioni"></div></div>
   </div>
@@ -2369,17 +2264,17 @@ const defaultData = {
   ]
 };
 
-let data = p_loadData();
+let data = pa_loadData();
 
-function p_loadData() {
+function pa_loadData() {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored) { try { return JSON.parse(stored); } catch(e) {} }
   return JSON.parse(JSON.stringify(defaultData));
 }
 
-function p_saveData(triggerRerender) {
-  document.querySelectorAll('[data-path]').forEach(el => {
-    const path = el.dataset.path.split('.');
+function pa_saveData(triggerRerender) {
+  document.querySelectorAll('[data-pa-path]').forEach(el => {
+    const path = el.dataset.paPath.split('.');
     let obj = data;
     for (let i = 0; i < path.length - 1; i++) {
       const key = isNaN(path[i]) ? path[i] : parseInt(path[i]);
@@ -2390,45 +2285,45 @@ function p_saveData(triggerRerender) {
   });
 
   // Ordina per rank crescente (numerico, poi alfabetico per parità)
-  data.riepilogo.sort((a, b) => {
+  paData.riepilogo.sort((a, b) => {
     const ra = parseInt(a.rank) || 999;
     const rb = parseInt(b.rank) || 999;
     return ra - rb;
   });
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  p_showStatus('✦ Salvato');
+  pa_showStatus('✦ Salvato');
 
   // Se siamo sul tab palmares, ri-renderizza per aggiornare ordine e colori
   if (triggerRerender !== false) {
     const panel = document.getElementById('panel-palmares');
     if (panel && panel.classList.contains('active')) {
-      p_renderRiepilogo();
+      pa_renderRiepilogo();
       document.querySelectorAll('#riepilogo [contenteditable="true"]').forEach(el => {
-        el.addEventListener('blur', () => p_saveData());
+        el.addEventListener('blur', () => pa_saveData());
       });
     }
   }
 }
 
-function p_resetData() {
+function pa_resetData() {
   if (!confirm('Ripristinare i dati di default?')) return;
   localStorage.removeItem(STORAGE_KEY);
   data = JSON.parse(JSON.stringify(defaultData));
-  p_render();
-  p_showStatus('✦ Ripristinato');
+  pa_render();
+  pa_showStatus('✦ Ripristinato');
 }
 
-function p_switchTab(ev, id) {
+function pa_switchTab(ev, id) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   ev.target.classList.add('active');
   document.getElementById(id).classList.add('active');
-  p_render();
+  pa_render();
 }
 
-function p_exportJSON() {
-  p_saveData();
+function pa_exportJSON() {
+  pa_saveData();
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -2437,60 +2332,90 @@ function p_exportJSON() {
 }
 
 let _st;
-function p_showStatus(msg) {
+function pa_showStatus(msg) {
   const s = document.getElementById('status');
   s.textContent = msg;
   clearTimeout(_st);
   _st = setTimeout(() => s.textContent='', 2500);
 }
 
-function p_ed(value, path) {
-  return `<span contenteditable="true" data-path="${path}">${value||''}</span>`;
+function pa_ed(value, path) {
+  return `<span contenteditable="true" data-pa-path="${path}">${value||\'\'}</span>`;
+}
+// REMOVED"${path}">${value||''}</span>`;
 }
 
 const COMP_COLORS = { NBA:'background:rgba(180,140,10,.35);color:#F0C040', GL:'background:rgba(0,60,180,.4);color:#90c0ff', IT:'background:rgba(0,100,0,.4);color:#90ff90', PR:'background:rgba(120,0,140,.4);color:#d090ff' };
 
-function p_compBadge(comp) {
+function pa_compBadge(comp) {
   const style = COMP_COLORS[comp] || '';
   return `<span class="comp-badge" style="${style}">${comp||''}</span>`;
 }
 
-function p_renderRiepilogo() {
+function pa_renderRiepilogo() {
   const t = document.getElementById('riepilogo');
   while (t.rows.length > 2) t.deleteRow(2);
-  data.riepilogo.forEach((r, i) => {
+  paData.riepilogo.forEach((r, i) => {
     const tr = t.insertRow();
     const rn = parseInt(r.rank)||0; const rc = rn===1?'rank-1':rn===2?'rank-2':rn===3?'rank-3':'';
     tr.className = rc;
     tr.innerHTML = `
-      <td style="position:relative;font-family:'Cinzel',serif;font-weight:800;text-align:center">${p_ed(r.rank,`riepilogo.${i}.rank`)}<button class="btn-del" onclick="p_deleteGiocatore(${i})" title="Elimina" style="position:absolute;top:1px;right:1px;font-size:9px">✕</button></td>
-      <td style="text-align:left;font-style:italic">${p_ed(r.nome, `riepilogo.${i}.nome`)}</td>
-      <td style="text-align:center;font-size:15px;letter-spacing:2px;color:var(--gold)">${p_ed(r.anelli,`riepilogo.${i}.anelli`)}</td>
-      <td>${p_ed(r.nba[1], `riepilogo.${i}.nba.1`)}</td>
-      <td>${p_ed(r.nba[2], `riepilogo.${i}.nba.2`)}</td>
-      <td class="pos-val">${p_ed(r.gl[0], `riepilogo.${i}.gl.0`)}</td>
-      <td>${p_ed(r.gl[1], `riepilogo.${i}.gl.1`)}</td>
-      <td>${p_ed(r.gl[2], `riepilogo.${i}.gl.2`)}</td>
-      <td class="pos-val">${p_ed(r.it[0], `riepilogo.${i}.it.0`)}</td>
-      <td>${p_ed(r.it[1], `riepilogo.${i}.it.1`)}</td>
-      <td>${p_ed(r.it[2], `riepilogo.${i}.it.2`)}</td>
-      <td class="pos-val">${p_ed(r.pr[0], `riepilogo.${i}.pr.0`)}</td>
-      <td>${p_ed(r.pr[1], `riepilogo.${i}.pr.1`)}</td>
-      <td>${p_ed(r.pr[2], `riepilogo.${i}.pr.2`)}</td>
-      <td class="pos-val">${p_ed(r.mit,      `riepilogo.${i}.mit`)}</td>
-      <td class="pos-val">${p_ed(r.sd,       `riepilogo.${i}.sd`)}</td>
-      <td class="ind-val">${p_ed(r.mvp,      `riepilogo.${i}.mvp`)}</td>
-      <td class="ind-val">${p_ed(r.dpoy,     `riepilogo.${i}.dpoy`)}</td>
-      <td class="ind-val">${p_ed(r.topscorer,`riepilogo.${i}.topscorer`)}</td>
-      <td class="neg-val">${p_ed(r.bd,       `riepilogo.${i}.bd`)}</td>
-      <td class="neg-val">${p_ed(r.mdt,      `riepilogo.${i}.mdt`)}</td>
+      <td style="position:relative;font-family:'Cinzel',serif;font-weight:800;text-align:center">${pa_ed(r.rank,`riepilogo.${i}.rank`)}<button class="btn-del" onclick="pa_deleteGiocatore(${i})" title="Elimina" style="position:absolute;top:1px;right:1px;font-size:9px">✕</button></td>
+      <td style="text-align:left;font-style:italic">${pa_ed(r.nome, `riepilogo.${i}.nome`)}</td>
+      <td style="text-align:center;font-size:15px;letter-spacing:2px;color:var(--gold)">${pa_ed(r.anelli,`riepilogo.${i}.anelli`)}</td>
+      <td>${pa_ed(r.nba[1], `riepilogo.${i}.nba.1`)}</td>
+      <td>${pa_ed(r.nba[2], `riepilogo.${i}.nba.2`)}</td>
+      <td class="pos-val">${pa_ed(r.gl[0], `riepilogo.${i}.gl.0`)}</td>
+      <td>${pa_ed(r.gl[1], `riepilogo.${i}.gl.1`)}</td>
+      <td>${pa_ed(r.gl[2], `riepilogo.${i}.gl.2`)}</td>
+      <td class="pos-val">${pa_ed(r.it[0], `riepilogo.${i}.it.0`)}</td>
+      <td>${pa_ed(r.it[1], `riepilogo.${i}.it.1`)}</td>
+      <td>${pa_ed(r.it[2], `riepilogo.${i}.it.2`)}</td>
+      <td class="pos-val">${pa_ed(r.pr[0], `riepilogo.${i}.pr.0`)}</td>
+      <td>${pa_ed(r.pr[1], `riepilogo.${i}.pr.1`)}</td>
+      <td>${pa_ed(r.pr[2], `riepilogo.${i}.pr.2`)}</td>
+      <td class="pos-val">${pa_ed(r.mit,      `riepilogo.${i}.mit`)}</td>
+      <td class="pos-val">${pa_ed(r.sd,       `riepilogo.${i}.sd`)}</td>
+      <td class="ind-val">${pa_ed(r.mvp,      `riepilogo.${i}.mvp`)}</td>
+      <td class="ind-val">${pa_ed(r.dpoy,     `riepilogo.${i}.dpoy`)}</td>
+      <td class="ind-val">${pa_ed(r.topscorer,`riepilogo.${i}.topscorer`)}</td>
+      <td class="neg-val">${pa_ed(r.bd,       `riepilogo.${i}.bd`)}</td>
+      <td class="neg-val">${pa_ed(r.mdt,      `riepilogo.${i}.mdt`)}</td>
     `;
   });
 }
 
 let activeComp = 'NBA';
 
-// [duplicate functions removed]
+function pa_addStagione() {
+  paData.stagioni.unshift({ comp: PA_activeComp, anno: '', primo:'', primoRec:'', primoPt:'', secondo:'', secondoRec:'', secondoPt:'', terzo:'', terzoRec:'', terzoPt:'' });
+  pa_saveData();
+  pa_renderStagioni();
+  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
+}
+
+function pa_deleteStagione(idx) {
+  if (!confirm('Eliminare questa stagione?')) return;
+  paData.stagioni.splice(idx, 1);
+  pa_saveData();
+  pa_renderStagioni();
+  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
+}
+
+function pa_addGiocatore() {
+  paData.riepilogo.unshift({ rank:'', nome:'', anelli:'', nba:['','',''], gl:['','',''], it:['','',''], pr:['','',''], mit:'', sd:'', mvp:'', dpoy:'', topscorer:'', bd:'', mdt:'' });
+  pa_saveData();
+  pa_renderRiepilogo();
+  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
+}
+
+function pa_deleteGiocatore(idx) {
+  if (!confirm('Eliminare questo giocatore?')) return;
+  paData.riepilogo.splice(idx, 1);
+  pa_saveData();
+  pa_renderRiepilogo();
+  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
+}
 
 const COMP_UI = {
   NBA: { border:'#C49A22', bg:'rgba(196,154,34,.08)', btnBg:'linear-gradient(180deg,#3a2e00,#1a1500)', btnColor:'#F0C040', btnBorder:'#C49A22' },
@@ -2499,7 +2424,7 @@ const COMP_UI = {
   PR:  { border:'#9040cc', bg:'rgba(120,0,140,.08)',  btnBg:'linear-gradient(180deg,#1a0030,#100020)', btnColor:'#d090ff', btnBorder:'#9040cc' },
 };
 
-function p_applyCompColors(comp) {
+function pa_applyCompColors(comp) {
   const ui = COMP_UI[comp] || COMP_UI.NBA;
   const btn = document.getElementById('btn-add-stagione');
   if (btn) {
@@ -2514,18 +2439,18 @@ function p_applyCompColors(comp) {
   }
 }
 
-function p_switchComp(ev, comp) {
+function pa_switchComp(ev, comp) {
   activeComp = comp;
   document.querySelectorAll('.comp-tab').forEach(t => t.classList.remove('active'));
   ev.target.classList.add('active');
-  p_applyCompColors(comp);
-  p_renderStagioni();
+  pa_applyCompColors(comp);
+  pa_renderStagioni();
   document.querySelectorAll('[contenteditable="true"]').forEach(el => {
-    el.addEventListener('blur', () => p_saveData());
+    el.addEventListener('blur', () => pa_saveData());
   });
 }
 
-function p_renderStagioni() {
+function pa_renderStagioni() {
   const wrap = document.getElementById('stagioni');
   wrap.innerHTML = '';
   const filtered = data.stagioni.filter(s => s.comp === activeComp);
@@ -2548,106 +2473,42 @@ function p_renderStagioni() {
     const div = document.createElement('div');
     div.className = 'stagione';
     div.innerHTML = `<table style="border:1px solid ${cp.border};background:${cp.tbg}">
-      <tr><th colspan="2" style="background:${cp.hbg};color:${cp.hcol};font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;text-align:center;padding:8px 10px;border-bottom:1px solid ${cp.border}"><button class="btn-del" onclick="p_deleteStagione(${i})" title="Elimina">✕</button>${p_ed(s.anno,`stagioni.${i}.anno`)}</th></tr>
-      <tr><th class="s-primo">🥇 Primo</th><td class="s-primo s-val">${p_ed(s.primo,`stagioni.${i}.primo`)}</td></tr>
-      ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${p_ed(s.primoRec,`stagioni.${i}.primoRec`)}</td></tr>` : ''}
-      ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${p_ed(s.primoPt,`stagioni.${i}.primoPt`)}</td></tr>` : ''}
-      <tr><th class="s-secondo">🥈 Secondo</th><td class="s-secondo s-val">${p_ed(s.secondo,`stagioni.${i}.secondo`)}</td></tr>
-      ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${p_ed(s.secondoRec,`stagioni.${i}.secondoRec`)}</td></tr>` : ''}
-      ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${p_ed(s.secondoPt,`stagioni.${i}.secondoPt`)}</td></tr>` : ''}
-      <tr><th class="s-terzo">🥉 Terzo</th><td class="s-terzo s-val">${p_ed(s.terzo,`stagioni.${i}.terzo`)}</td></tr>
-      ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${p_ed(s.terzoRec,`stagioni.${i}.terzoRec`)}</td></tr>` : ''}
-      ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${p_ed(s.terzoPt,`stagioni.${i}.terzoPt`)}</td></tr>` : ''}
+      <tr><th colspan="2" style="background:${cp.hbg};color:${cp.hcol};font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;text-align:center;padding:8px 10px;border-bottom:1px solid ${cp.border}"><button class="btn-del" onclick="pa_deleteStagione(${i})" title="Elimina">✕</button>${pa_ed(s.anno,`stagioni.${i}.anno`)}</th></tr>
+      <tr><th class="s-primo">🥇 Primo</th><td class="s-primo s-val">${pa_ed(s.primo,`stagioni.${i}.primo`)}</td></tr>
+      ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${pa_ed(s.primoRec,`stagioni.${i}.primoRec`)}</td></tr>` : ''}
+      ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${pa_ed(s.primoPt,`stagioni.${i}.primoPt`)}</td></tr>` : ''}
+      <tr><th class="s-secondo">🥈 Secondo</th><td class="s-secondo s-val">${pa_ed(s.secondo,`stagioni.${i}.secondo`)}</td></tr>
+      ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${pa_ed(s.secondoRec,`stagioni.${i}.secondoRec`)}</td></tr>` : ''}
+      ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${pa_ed(s.secondoPt,`stagioni.${i}.secondoPt`)}</td></tr>` : ''}
+      <tr><th class="s-terzo">🥉 Terzo</th><td class="s-terzo s-val">${pa_ed(s.terzo,`stagioni.${i}.terzo`)}</td></tr>
+      ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${pa_ed(s.terzoRec,`stagioni.${i}.terzoRec`)}</td></tr>` : ''}
+      ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${pa_ed(s.terzoPt,`stagioni.${i}.terzoPt`)}</td></tr>` : ''}
     </table>`;
     wrap.appendChild(div);
   });
 }
 
-function p_render() {
-  p_renderRiepilogo();
-  p_renderStagioni();
+function pa_render() {
+  pa_renderRiepilogo();
+  pa_renderStagioni();
   document.querySelectorAll('[contenteditable="true"]').forEach(el => {
-    el.addEventListener('blur', () => p_saveData());
+    el.addEventListener('blur', () => pa_saveData());
   });
 }
 
 // Calcola rank al caricamento iniziale
-p_saveData(false);
-p_render();
-p_applyCompColors(activeComp);
+pa_saveData(false);
+pa_render();
+pa_applyCompColors(activeComp);
 </script>
 
 </div>
 
 <script>
 
-function p_saveData(x) {
-  if (!isAdmin) { p_showStatus('🔒 Solo admin'); return; }
-  p_saveData_inner(x);
-}
+const PA_STORAGE_KEY = 'palmares_dunkest_v2';
 
-// ── ADMIN GUARD ALBO D'ORO ────────────────────────────────────────────
-// Inietta CSS readonly permanente nel document
-
-
-function p_applyReadonly() {
-  var admin = isAdmin;
-  // Contenteditable
-  document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){
-    el.contentEditable = admin ? 'true' : 'false';
-    el.style.cursor = admin ? 'text' : 'default';
-    el.style.pointerEvents = admin ? '' : 'none';
-  });
-  // Bottoni add/delete
-  document.querySelectorAll('#sec-palmares .btn-add, #sec-palmares .btn-del').forEach(function(b){
-    b.style.display = admin ? '' : 'none';
-  });
-}
-
-function p_setAdminMode(admin) {
-  // Forza re-render e applica stato corretto
-  if (typeof p_render === 'function') p_render();
-  p_applyReadonly();
-}
-
-// Wrap render functions per riaplicare sempre readonly dopo ogni re-render
-(function(){
-  var _origRender = p_render;
-  p_render = function() { _origRender(); p_applyReadonly(); };
-  var _origR = p_renderRiepilogo;
-  p_renderRiepilogo = function() { _origR(); p_applyReadonly(); };
-  var _origS = p_renderStagioni;
-  p_renderStagioni = function() { _origS(); p_applyReadonly(); };
-})();
-
-
-const P_STORAGE_KEY = 'p_palmares_v2';
-let palmDbRef = null;
-let palmIgnoreNext = false;
-
-// Collega il Palmarès a Firebase sotto il nodo 'palmares'
-function p_initFirebase() {
-  try {
-    if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return;
-    const db = firebase.database(firebase.apps[0]);
-    palmDbRef = db.ref('palmares');
-    // Ascolta aggiornamenti in tempo reale
-    palmDbRef.on('value', function(snapshot) {
-      if (palmIgnoreNext) { palmIgnoreNext = false; return; }
-      const fbData = snapshot.val();
-      if (fbData) {
-        pData = fbData;
-        localStorage.setItem(P_STORAGE_KEY, JSON.stringify(pData));
-        p_render();
-        p_showStatus('🟢 Aggiornato');
-      }
-    });
-  } catch(e) { console.warn('Palm Firebase error:', e); }
-}
-
-// p_initFirebase viene ora chiamata da initFirebaseCore direttamente
-
-const pDefaultData = {
+const PA_defaultData = {
   riepilogo: [
     { rank:1, nome:"Luca",           anelli:"💍💍💍💍", nba:["","1",""],  gl:["","",""], it:["","",""], pr:["","",""], mit:"", sd:"", mvp:"", dpoy:"", topscorer:"", bd:"", mdt:"" },
     { rank:2, nome:"Edo",            anelli:"💍💍",     nba:["","",""],   gl:["","",""], it:["","",""], pr:["","",""], mit:"", sd:"", mvp:"", dpoy:"", topscorer:"", bd:"", mdt:"" },
@@ -2673,18 +2534,18 @@ const pDefaultData = {
   ]
 };
 
-let pData = p_loadData();
+let paData = pa_loadData();
 
-function p_loadData() {
-  const stored = localStorage.getItem(P_STORAGE_KEY);
+function pa_loadData() {
+  const stored = localStorage.getItem(PA_STORAGE_KEY);
   if (stored) { try { return JSON.parse(stored); } catch(e) {} }
-  return JSON.parse(JSON.stringify(pDefaultData));
+  return JSON.parse(JSON.stringify(PA_defaultData));
 }
 
-function p_saveData_inner(triggerRerender) {
-  document.querySelectorAll('[pData-path]').forEach(el => {
-    const path = el.dataset.path.split('.');
-    let obj = pData;
+function pa_saveData(triggerRerender) {
+  document.querySelectorAll('[data-pa-path]').forEach(el => {
+    const path = el.dataset.paPath.split('.');
+    let obj = paData;
     for (let i = 0; i < path.length - 1; i++) {
       const key = isNaN(path[i]) ? path[i] : parseInt(path[i]);
       obj = obj[key];
@@ -2694,55 +2555,46 @@ function p_saveData_inner(triggerRerender) {
   });
 
   // Ordina per rank crescente (numerico, poi alfabetico per parità)
-  pData.riepilogo.sort((a, b) => {
+  paData.riepilogo.sort((a, b) => {
     const ra = parseInt(a.rank) || 999;
     const rb = parseInt(b.rank) || 999;
     return ra - rb;
   });
 
-  localStorage.setItem(P_STORAGE_KEY, JSON.stringify(pData));
-
-  // Salva su Firebase se connesso e admin
-  if (palmDbRef && isAdmin) {
-    palmIgnoreNext = true;
-    palmDbRef.set(JSON.parse(JSON.stringify(pData)))
-      .then(function(){ p_showStatus('✅ Salvato'); })
-      .catch(function(e){ palmIgnoreNext = false; p_showStatus('❌ Errore: ' + e.message); });
-  } else {
-    p_showStatus('✦ Salvato (locale)');
-  }
+  localStorage.setItem(PA_STORAGE_KEY, JSON.stringify(paData));
+  pa_showStatus('✦ Salvato');
 
   // Se siamo sul tab palmares, ri-renderizza per aggiornare ordine e colori
   if (triggerRerender !== false) {
     const panel = document.getElementById('panel-palmares');
     if (panel && panel.classList.contains('active')) {
-      p_renderRiepilogo();
+      pa_renderRiepilogo();
       document.querySelectorAll('#riepilogo [contenteditable="true"]').forEach(el => {
-        el.addEventListener('blur', () => p_saveData());
+        el.addEventListener('blur', () => pa_saveData());
       });
     }
   }
 }
 
-function p_resetData() {
+function pa_resetData() {
   if (!confirm('Ripristinare i dati di default?')) return;
-  localStorage.removeItem(P_STORAGE_KEY);
-  pData = JSON.parse(JSON.stringify(pDefaultData));
-  p_render();
-  p_showStatus('✦ Ripristinato');
+  localStorage.removeItem(PA_STORAGE_KEY);
+  paData = JSON.parse(JSON.stringify(PA_defaultData));
+  pa_render();
+  pa_showStatus('✦ Ripristinato');
 }
 
-function p_switchTab(ev, id) {
+function pa_switchTab(ev, id) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   ev.target.classList.add('active');
   document.getElementById(id).classList.add('active');
-  p_render();
+  pa_render();
 }
 
-function p_exportJSON() {
-  p_saveData();
-  const blob = new Blob([JSON.stringify(pData, null, 2)], {type:'application/json'});
+function pa_exportJSON() {
+  pa_saveData();
+  const blob = new Blob([JSON.stringify(paData, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = 'palmares.json'; a.click();
@@ -2750,98 +2602,98 @@ function p_exportJSON() {
 }
 
 let _st;
-function p_showStatus(msg) {
+function pa_showStatus(msg) {
   const s = document.getElementById('status');
   s.textContent = msg;
   clearTimeout(_st);
   _st = setTimeout(() => s.textContent='', 2500);
 }
 
-function p_ed(value, path) {
-  return `<span contenteditable="true" pData-path="${path}">${value||''}</span>`;
+function pa_ed(value, path) {
+  return `<span contenteditable="true" data-pa-path="${path}">${value||''}</span>`;
 }
 
-const P_COMP_COLORS = { NBA:'background:rgba(180,140,10,.35);color:#F0C040', GL:'background:rgba(0,60,180,.4);color:#90c0ff', IT:'background:rgba(0,100,0,.4);color:#90ff90', PR:'background:rgba(120,0,140,.4);color:#d090ff' };
+const PA_COMP_COLORS = { NBA:'background:rgba(180,140,10,.35);color:#F0C040', GL:'background:rgba(0,60,180,.4);color:#90c0ff', IT:'background:rgba(0,100,0,.4);color:#90ff90', PR:'background:rgba(120,0,140,.4);color:#d090ff' };
 
-function p_compBadge(comp) {
-  const style = P_COMP_COLORS[comp] || '';
+function pa_compBadge(comp) {
+  const style = PA_COMP_COLORS[comp] || '';
   return `<span class="comp-badge" style="${style}">${comp||''}</span>`;
 }
 
-function p_renderRiepilogo() {
+function pa_renderRiepilogo() {
   const t = document.getElementById('riepilogo');
   while (t.rows.length > 2) t.deleteRow(2);
-  pData.riepilogo.forEach((r, i) => {
+  paData.riepilogo.forEach((r, i) => {
     const tr = t.insertRow();
     const rn = parseInt(r.rank)||0; const rc = rn===1?'rank-1':rn===2?'rank-2':rn===3?'rank-3':'';
     tr.className = rc;
     tr.innerHTML = `
-      <td style="position:relative;font-family:'Cinzel',serif;font-weight:800;text-align:center">${p_ed(r.rank,`riepilogo.${i}.rank`)}<button class="btn-del" onclick="p_deleteGiocatore(${i})" title="Elimina" style="position:absolute;top:1px;right:1px;font-size:9px">✕</button></td>
-      <td style="text-align:left;font-style:italic">${p_ed(r.nome, `riepilogo.${i}.nome`)}</td>
-      <td style="text-align:center;font-size:15px;letter-spacing:2px;color:var(--gold)">${p_ed(r.anelli,`riepilogo.${i}.anelli`)}</td>
-      <td>${p_ed(r.nba[1], `riepilogo.${i}.nba.1`)}</td>
-      <td>${p_ed(r.nba[2], `riepilogo.${i}.nba.2`)}</td>
-      <td class="pos-val">${p_ed(r.gl[0], `riepilogo.${i}.gl.0`)}</td>
-      <td>${p_ed(r.gl[1], `riepilogo.${i}.gl.1`)}</td>
-      <td>${p_ed(r.gl[2], `riepilogo.${i}.gl.2`)}</td>
-      <td class="pos-val">${p_ed(r.it[0], `riepilogo.${i}.it.0`)}</td>
-      <td>${p_ed(r.it[1], `riepilogo.${i}.it.1`)}</td>
-      <td>${p_ed(r.it[2], `riepilogo.${i}.it.2`)}</td>
-      <td class="pos-val">${p_ed(r.pr[0], `riepilogo.${i}.pr.0`)}</td>
-      <td>${p_ed(r.pr[1], `riepilogo.${i}.pr.1`)}</td>
-      <td>${p_ed(r.pr[2], `riepilogo.${i}.pr.2`)}</td>
-      <td class="pos-val">${p_ed(r.mit,      `riepilogo.${i}.mit`)}</td>
-      <td class="pos-val">${p_ed(r.sd,       `riepilogo.${i}.sd`)}</td>
-      <td class="ind-val">${p_ed(r.mvp,      `riepilogo.${i}.mvp`)}</td>
-      <td class="ind-val">${p_ed(r.dpoy,     `riepilogo.${i}.dpoy`)}</td>
-      <td class="ind-val">${p_ed(r.topscorer,`riepilogo.${i}.topscorer`)}</td>
-      <td class="neg-val">${p_ed(r.bd,       `riepilogo.${i}.bd`)}</td>
-      <td class="neg-val">${p_ed(r.mdt,      `riepilogo.${i}.mdt`)}</td>
+      <td style="position:relative;font-family:'Cinzel',serif;font-weight:800;text-align:center">${pa_ed(r.rank,`riepilogo.${i}.rank`)}<button class="btn-del" onclick="pa_deleteGiocatore(${i})" title="Elimina" style="position:absolute;top:1px;right:1px;font-size:9px">✕</button></td>
+      <td style="text-align:left;font-style:italic">${pa_ed(r.nome, `riepilogo.${i}.nome`)}</td>
+      <td style="text-align:center;font-size:15px;letter-spacing:2px;color:var(--gold)">${pa_ed(r.anelli,`riepilogo.${i}.anelli`)}</td>
+      <td>${pa_ed(r.nba[1], `riepilogo.${i}.nba.1`)}</td>
+      <td>${pa_ed(r.nba[2], `riepilogo.${i}.nba.2`)}</td>
+      <td class="pos-val">${pa_ed(r.gl[0], `riepilogo.${i}.gl.0`)}</td>
+      <td>${pa_ed(r.gl[1], `riepilogo.${i}.gl.1`)}</td>
+      <td>${pa_ed(r.gl[2], `riepilogo.${i}.gl.2`)}</td>
+      <td class="pos-val">${pa_ed(r.it[0], `riepilogo.${i}.it.0`)}</td>
+      <td>${pa_ed(r.it[1], `riepilogo.${i}.it.1`)}</td>
+      <td>${pa_ed(r.it[2], `riepilogo.${i}.it.2`)}</td>
+      <td class="pos-val">${pa_ed(r.pr[0], `riepilogo.${i}.pr.0`)}</td>
+      <td>${pa_ed(r.pr[1], `riepilogo.${i}.pr.1`)}</td>
+      <td>${pa_ed(r.pr[2], `riepilogo.${i}.pr.2`)}</td>
+      <td class="pos-val">${pa_ed(r.mit,      `riepilogo.${i}.mit`)}</td>
+      <td class="pos-val">${pa_ed(r.sd,       `riepilogo.${i}.sd`)}</td>
+      <td class="ind-val">${pa_ed(r.mvp,      `riepilogo.${i}.mvp`)}</td>
+      <td class="ind-val">${pa_ed(r.dpoy,     `riepilogo.${i}.dpoy`)}</td>
+      <td class="ind-val">${pa_ed(r.topscorer,`riepilogo.${i}.topscorer`)}</td>
+      <td class="neg-val">${pa_ed(r.bd,       `riepilogo.${i}.bd`)}</td>
+      <td class="neg-val">${pa_ed(r.mdt,      `riepilogo.${i}.mdt`)}</td>
     `;
   });
 }
 
-let pActiveComp = 'NBA';
+let PA_activeComp = 'NBA';
 
-function p_addStagione() {
-  pData.stagioni.unshift({ comp: pActiveComp, anno: '', primo:'', primoRec:'', primoPt:'', secondo:'', secondoRec:'', secondoPt:'', terzo:'', terzoRec:'', terzoPt:'' });
-  p_saveData();
-  p_renderStagioni();
-  document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){ el.addEventListener('blur', function(){ p_saveData(); }); });
+function pa_addStagione() {
+  paData.stagioni.unshift({ comp: PA_activeComp, anno: '', primo:'', primoRec:'', primoPt:'', secondo:'', secondoRec:'', secondoPt:'', terzo:'', terzoRec:'', terzoPt:'' });
+  pa_saveData();
+  pa_renderStagioni();
+  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', pa_saveData));
 }
 
-function p_deleteStagione(idx) {
+function pa_deleteStagione(idx) {
   if (!confirm('Eliminare questa stagione?')) return;
-  pData.stagioni.splice(idx, 1);
-  p_saveData();
-  p_renderStagioni();
-  document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){ el.addEventListener('blur', function(){ p_saveData(); }); });
+  paData.stagioni.splice(idx, 1);
+  pa_saveData();
+  pa_renderStagioni();
+  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', pa_saveData));
 }
 
-function p_addGiocatore() {
-  pData.riepilogo.unshift({ rank:'', nome:'', anelli:'', nba:['','',''], gl:['','',''], it:['','',''], pr:['','',''], mit:'', sd:'', mvp:'', dpoy:'', topscorer:'', bd:'', mdt:'' });
-  p_saveData();
-  p_renderRiepilogo();
-  document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){ el.addEventListener('blur', function(){ p_saveData(); }); });
+function pa_addGiocatore() {
+  paData.riepilogo.unshift({ rank:'', nome:'', anelli:'', nba:['','',''], gl:['','',''], it:['','',''], pr:['','',''], mit:'', sd:'', mvp:'', dpoy:'', topscorer:'', bd:'', mdt:'' });
+  pa_saveData();
+  pa_renderRiepilogo();
+  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', pa_saveData));
 }
 
-function p_deleteGiocatore(idx) {
+function pa_deleteGiocatore(idx) {
   if (!confirm('Eliminare questo giocatore?')) return;
-  pData.riepilogo.splice(idx, 1);
-  p_saveData();
-  p_renderRiepilogo();
-  document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){ el.addEventListener('blur', function(){ p_saveData(); }); });
+  paData.riepilogo.splice(idx, 1);
+  pa_saveData();
+  pa_renderRiepilogo();
+  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', pa_saveData));
 }
 
-const P_COMP_UI = {
+const PA_COMP_UI = {
   NBA: { border:'#C49A22', bg:'rgba(196,154,34,.08)', btnBg:'linear-gradient(180deg,#3a2e00,#1a1500)', btnColor:'#F0C040', btnBorder:'#C49A22' },
   GL:  { border:'#4080cc', bg:'rgba(0,60,180,.08)',   btnBg:'linear-gradient(180deg,#001a3a,#00102a)', btnColor:'#90c0ff', btnBorder:'#4080cc' },
   IT:  { border:'#00aa00', bg:'rgba(0,100,0,.08)',    btnBg:'linear-gradient(180deg,#001a00,#001200)', btnColor:'#90ff90', btnBorder:'#00aa00' },
   PR:  { border:'#9040cc', bg:'rgba(120,0,140,.08)',  btnBg:'linear-gradient(180deg,#1a0030,#100020)', btnColor:'#d090ff', btnBorder:'#9040cc' },
 };
 
-function p_applyCompColors(comp) {
-  const ui = P_COMP_UI[comp] || P_COMP_UI.NBA;
+function pa_applyCompColors(comp) {
+  const ui = PA_COMP_UI[comp] || PA_COMP_UI.NBA;
   const btn = document.getElementById('btn-add-stagione');
   if (btn) {
     btn.style.background = ui.btnBg;
@@ -2855,21 +2707,21 @@ function p_applyCompColors(comp) {
   }
 }
 
-function p_switchComp(ev, comp) {
-  pActiveComp = comp;
+function pa_switchComp(ev, comp) {
+  PA_activeComp = comp;
   document.querySelectorAll('.comp-tab').forEach(t => t.classList.remove('active'));
   ev.target.classList.add('active');
-  p_applyCompColors(comp);
-  p_renderStagioni();
+  pa_applyCompColors(comp);
+  pa_renderStagioni();
   document.querySelectorAll('[contenteditable="true"]').forEach(el => {
-    el.addEventListener('blur', () => p_saveData());
+    el.addEventListener('blur', () => pa_saveData());
   });
 }
 
-function p_renderStagioni() {
+function pa_renderStagioni() {
   const wrap = document.getElementById('stagioni');
   wrap.innerHTML = '';
-  const filtered = pData.stagioni.filter(s => s.comp === pActiveComp);
+  const filtered = paData.stagioni.filter(s => s.comp === PA_activeComp);
   if (filtered.length === 0) {
     wrap.innerHTML = '<p style="color:var(--text2);font-style:italic;font-family:\'EB Garamond\',serif;padding:20px 0">Nessuna stagione registrata per questa competizione.</p>';
     return;
@@ -2882,46 +2734,137 @@ function p_renderStagioni() {
   };
 
   filtered.forEach((s) => {
-    const i = pData.stagioni.indexOf(s);
+    const i = paData.stagioni.indexOf(s);
     const showRec = s.comp !== 'IT';
     const showPt  = s.comp !== 'IT' && s.comp !== 'PR';
     const cp = CPALET[s.comp] || CPALET.NBA;
     const div = document.createElement('div');
     div.className = 'stagione';
     div.innerHTML = `<table style="border:1px solid ${cp.border};background:${cp.tbg}">
-      <tr><th colspan="2" style="background:${cp.hbg};color:${cp.hcol};font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;text-align:center;padding:8px 10px;border-bottom:1px solid ${cp.border}"><button class="btn-del" onclick="p_deleteStagione(${i})" title="Elimina">✕</button>${p_ed(s.anno,`stagioni.${i}.anno`)}</th></tr>
-      <tr><th class="s-primo">🥇 Primo</th><td class="s-primo s-val">${p_ed(s.primo,`stagioni.${i}.primo`)}</td></tr>
-      ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${p_ed(s.primoRec,`stagioni.${i}.primoRec`)}</td></tr>` : ''}
-      ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${p_ed(s.primoPt,`stagioni.${i}.primoPt`)}</td></tr>` : ''}
-      <tr><th class="s-secondo">🥈 Secondo</th><td class="s-secondo s-val">${p_ed(s.secondo,`stagioni.${i}.secondo`)}</td></tr>
-      ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${p_ed(s.secondoRec,`stagioni.${i}.secondoRec`)}</td></tr>` : ''}
-      ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${p_ed(s.secondoPt,`stagioni.${i}.secondoPt`)}</td></tr>` : ''}
-      <tr><th class="s-terzo">🥉 Terzo</th><td class="s-terzo s-val">${p_ed(s.terzo,`stagioni.${i}.terzo`)}</td></tr>
-      ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${p_ed(s.terzoRec,`stagioni.${i}.terzoRec`)}</td></tr>` : ''}
-      ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${p_ed(s.terzoPt,`stagioni.${i}.terzoPt`)}</td></tr>` : ''}
+      <tr><th colspan="2" style="background:${cp.hbg};color:${cp.hcol};font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;text-align:center;padding:8px 10px;border-bottom:1px solid ${cp.border}"><button class="btn-del" onclick="pa_deleteStagione(${i})" title="Elimina">✕</button>${pa_ed(s.anno,`stagioni.${i}.anno`)}</th></tr>
+      <tr><th class="s-primo">🥇 Primo</th><td class="s-primo s-val">${pa_ed(s.primo,`stagioni.${i}.primo`)}</td></tr>
+      ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${pa_ed(s.primoRec,`stagioni.${i}.primoRec`)}</td></tr>` : ''}
+      ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${pa_ed(s.primoPt,`stagioni.${i}.primoPt`)}</td></tr>` : ''}
+      <tr><th class="s-secondo">🥈 Secondo</th><td class="s-secondo s-val">${pa_ed(s.secondo,`stagioni.${i}.secondo`)}</td></tr>
+      ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${pa_ed(s.secondoRec,`stagioni.${i}.secondoRec`)}</td></tr>` : ''}
+      ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${pa_ed(s.secondoPt,`stagioni.${i}.secondoPt`)}</td></tr>` : ''}
+      <tr><th class="s-terzo">🥉 Terzo</th><td class="s-terzo s-val">${pa_ed(s.terzo,`stagioni.${i}.terzo`)}</td></tr>
+      ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${pa_ed(s.terzoRec,`stagioni.${i}.terzoRec`)}</td></tr>` : ''}
+      ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${pa_ed(s.terzoPt,`stagioni.${i}.terzoPt`)}</td></tr>` : ''}
     </table>`;
     wrap.appendChild(div);
   });
 }
 
-function p_render() {
-  p_renderRiepilogo();
-  p_renderStagioni();
+function pa_render() {
+  pa_renderRiepilogo();
+  pa_renderStagioni();
   document.querySelectorAll('[contenteditable="true"]').forEach(el => {
-    el.addEventListener('blur', () => p_saveData());
+    el.addEventListener('blur', () => pa_saveData());
   });
 }
 
 // Calcola rank al caricamento iniziale
-p_saveData(false);
-p_render();
-p_applyCompColors(pActiveComp);
+pa_saveData(false);
+pa_render();
+pa_applyCompColors(PA_activeComp);
+
+
+// ═══════════════════════════════════════════════════════════════
+// PALMARES ADMIN GUARD
+// ═══════════════════════════════════════════════════════════════
+function pa_applyGuard() {
+  var ok = (typeof isAdmin !== 'undefined') && isAdmin;
+  document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el) {
+    el.contentEditable = ok ? 'true' : 'false';
+    el.style.pointerEvents = ok ? '' : 'none';
+    el.style.cursor = ok ? 'text' : 'default';
+  });
+  document.querySelectorAll('#sec-palmares .btn-add, #sec-palmares .btn-del').forEach(function(b) {
+    b.style.display = ok ? '' : 'none';
+    b.style.visibility = ok ? '' : 'hidden';
+  });
+}
+
+// Override pa_saveData to block non-admin writes
+var _pa_save_real = pa_saveData;
+pa_saveData = function(x) {
+  var ok = (typeof isAdmin !== 'undefined') && isAdmin;
+  if (!ok) { pa_showStatus('🔒 Solo admin'); return; }
+  _pa_save_real(x);
+};
+
+// Wrap renders so guard is always re-applied
+(function() {
+  var _r  = pa_render;
+  var _rR = pa_renderRiepilogo;
+  var _rS = pa_renderStagioni;
+  pa_render = function() {
+    if (_r) _r();
+    pa_applyGuard();
+  };
+  pa_renderRiepilogo = function() {
+    if (_rR) _rR();
+    pa_applyGuard();
+  };
+  pa_renderStagioni = function() {
+    if (_rS) _rS();
+    pa_applyGuard();
+  };
+})();
+
+// Called by main site after admin login
+function pa_setAdminMode(isAdminNow) {
+  pa_applyGuard();
+  if (isAdminNow) {
+    pa_render();
+  }
+}
+
 
 // Init Palmares
-p_saveData_inner(false);
-p_render();
-if (typeof p_applyCompColors === 'function') p_applyCompColors(pActiveComp);
-p_applyReadonly();
+(function() {
+  if (typeof pa_saveData === 'function') pa_saveData(false);
+  if (typeof pa_render === 'function') pa_render();
+  if (typeof pa_applyCompColors === 'function') pa_applyCompColors(PA_activeComp);
+  pa_applyGuard();
+})();
+
+// Firebase sync for Palmares
+var pa_dbRef = null;
+var pa_ignoreNext = false;
+function pa_initFirebase() {
+  try {
+    if (!window.firebase || !firebase.apps || !firebase.apps.length) return;
+    var db = firebase.database(firebase.apps[0]);
+    pa_dbRef = db.ref('palmares');
+    pa_dbRef.on('value', function(snap) {
+      if (pa_ignoreNext) { pa_ignoreNext = false; return; }
+      var d = snap.val();
+      if (d) {
+        paData = d;
+        if (typeof pa_render === 'function') pa_render();
+      }
+    });
+  } catch(e) { console.warn('PA Firebase:', e); }
+}
+setTimeout(pa_initFirebase, 2000);
+
+// Override save to write to Firebase
+var _pa_save_firebase = pa_saveData;
+pa_saveData = function(x) {
+  var ok = (typeof isAdmin !== 'undefined') && isAdmin;
+  if (!ok) { pa_showStatus('🔒 Solo admin'); return; }
+  // Call the real inner save
+  if (typeof _pa_save_real !== 'undefined') _pa_save_real(x);
+  // Also write to Firebase
+  if (pa_dbRef) {
+    pa_ignoreNext = true;
+    pa_dbRef.set(JSON.parse(JSON.stringify(paData)))
+      .then(function() { pa_showStatus('✅ Salvato'); })
+      .catch(function(e) { pa_ignoreNext = false; pa_showStatus('❌ ' + e.message); });
+  }
+};
 </script>
 
 </body></html>
