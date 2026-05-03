@@ -2153,6 +2153,7 @@ if (!firebaseOk) {
 #sec-palmares .tab-panel.active { display:block; }
 /* Hide edit elements for guests */
 #sec-palmares .btn-add, #sec-palmares .btn-del { display: none; }
+#sec-palmares .btn-add, #sec-palmares .btn-del { display: none; }
 </style>
 
 <div id="sec-palmares" class="home-section">
@@ -2485,7 +2486,6 @@ function pa_loadData() {
 }
 
 function pa_saveData(triggerRerender) {
-  if (!(typeof isAdmin !== "undefined" && isAdmin)) { pa_showStatus("🔒 Solo admin"); return; }
   document.querySelectorAll('[data-pa-path]').forEach(el => {
     const path = el.dataset.paPath.split('.');
     let obj = paData;
@@ -2691,14 +2691,100 @@ pa_applyCompColors(PA_activeComp);
 
 
 
-// Wrap renders to always re-apply guard
+
+// ═══════════════════════════════════════════════
+// PALMARES — ADMIN & FIREBASE
+// ═══════════════════════════════════════════════
+var pa_dbRef = null;
+var pa_ignoreNext = false;
+
+// Usa una classe sul body come flag admin (evita problemi di scope)
+function pa_isAdmin() {
+  return document.body.classList.contains('palm-admin');
+}
+
+// Persiste paData direttamente senza leggere dal DOM
+function pa_persistData() {
+  if (!pa_isAdmin()) { pa_showStatus('🔒 Solo admin'); return; }
+  localStorage.setItem(PA_STORAGE_KEY, JSON.stringify(paData));
+  pa_showStatus('✅ Salvato');
+  if (pa_dbRef) {
+    pa_ignoreNext = true;
+    pa_dbRef.set(JSON.parse(JSON.stringify(paData)))
+      .catch(function(e) { pa_ignoreNext = false; pa_showStatus('❌ ' + e.message); });
+  }
+}
+
+// Mostra/nasconde elementi editabili in base al ruolo
+function pa_applyGuard() {
+  var ok = pa_isAdmin();
+  document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el) {
+    el.contentEditable = ok ? 'true' : 'false';
+    el.style.pointerEvents = ok ? '' : 'none';
+    el.style.cursor = ok ? 'text' : 'default';
+  });
+  document.querySelectorAll('#sec-palmares .btn-add, #sec-palmares .btn-del').forEach(function(b) {
+    b.style.display = ok ? 'inline-block' : 'none';
+  });
+}
+
+// Called by main site doAdminLogin
+function pa_setAdminMode(isAdminNow) {
+  if (isAdminNow) {
+    document.body.classList.add('palm-admin');
+  } else {
+    document.body.classList.remove('palm-admin');
+  }
+  pa_render();
+  pa_applyGuard();
+}
+
+// Aggiungi/Rimuovi giocatori
+
+
+// Aggiungi/Rimuovi stagioni
+
+
+// Firebase sync in tempo reale
+function pa_initFirebase() {
+  try {
+    if (!window.firebase || !firebase.apps || !firebase.apps.length) return;
+    var db = firebase.database(firebase.apps[0]);
+    pa_dbRef = db.ref('palmares');
+    pa_dbRef.on('value', function(snap) {
+      if (pa_ignoreNext) { pa_ignoreNext = false; return; }
+      var d = snap.val();
+      if (d) {
+        paData = d;
+        pa_render();
+        pa_applyGuard();
+      }
+    });
+  } catch(e) { console.warn('PA Firebase:', e); }
+}
+setTimeout(pa_initFirebase, 2000);
+
+// Override pa_saveData (chiamata al blur dei campi) per controllare admin
+var _pa_origSave = pa_saveData;
+pa_saveData = function(triggerRerender) {
+  if (!pa_isAdmin()) { pa_showStatus('🔒 Solo admin'); return; }
+  _pa_origSave(triggerRerender);
+  // Sync to Firebase after DOM-save
+  if (pa_dbRef) {
+    pa_ignoreNext = true;
+    pa_dbRef.set(JSON.parse(JSON.stringify(paData)))
+      .catch(function(e) { pa_ignoreNext = false; });
+  }
+};
+
+// Wrap renders to always call applyGuard after
 (function() {
   var _r  = pa_render;
   var _rR = pa_renderRiepilogo;
   var _rS = pa_renderStagioni;
-  pa_render = function() { if(_r) _r(); pa_applyGuard(); };
-  pa_renderRiepilogo = function() { if(_rR) _rR(); pa_applyGuard(); };
-  pa_renderStagioni = function() { if(_rS) _rS(); pa_applyGuard(); };
+  pa_render            = function() { if(_r)  _r();  pa_applyGuard(); };
+  pa_renderRiepilogo   = function() { if(_rR) _rR(); pa_applyGuard(); };
+  pa_renderStagioni    = function() { if(_rS) _rS(); pa_applyGuard(); };
 })();
 
 // Init Palmares
@@ -2710,8 +2796,6 @@ pa_applyCompColors(PA_activeComp);
 })();
 
 // Firebase sync for Palmares
-var pa_dbRef = null;
-var pa_ignoreNext = false;
 function pa_initFirebase() {
   try {
     if (!window.firebase || !firebase.apps || !firebase.apps.length) return;
@@ -2818,8 +2902,6 @@ function pa_setAdminMode(isAdminNow) {
 }
 
 // Firebase sync for Palmares
-var pa_dbRef = null;
-var pa_ignoreNext = false;
 function pa_initFirebase() {
   try {
     if (!window.firebase || !firebase.apps || !firebase.apps.length) return;
