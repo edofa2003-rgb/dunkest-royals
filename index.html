@@ -2490,35 +2490,7 @@ function p_renderRiepilogo() {
 
 let activeComp = 'NBA';
 
-function p_addStagione() {
-  data.stagioni.unshift({ comp: activeComp, anno: '', primo:'', primoRec:'', primoPt:'', secondo:'', secondoRec:'', secondoPt:'', terzo:'', terzoRec:'', terzoPt:'' });
-  p_saveData();
-  p_renderStagioni();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
-}
-
-function p_deleteStagione(idx) {
-  if (!confirm('Eliminare questa stagione?')) return;
-  data.stagioni.splice(idx, 1);
-  p_saveData();
-  p_renderStagioni();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
-}
-
-function p_addGiocatore() {
-  data.riepilogo.unshift({ rank:'', nome:'', anelli:'', nba:['','',''], gl:['','',''], it:['','',''], pr:['','',''], mit:'', sd:'', mvp:'', dpoy:'', topscorer:'', bd:'', mdt:'' });
-  p_saveData();
-  p_renderRiepilogo();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
-}
-
-function p_deleteGiocatore(idx) {
-  if (!confirm('Eliminare questo giocatore?')) return;
-  data.riepilogo.splice(idx, 1);
-  p_saveData();
-  p_renderRiepilogo();
-  document.querySelectorAll('[contenteditable="true"]').forEach(el => el.addEventListener('blur', saveData));
-}
+// [duplicate functions removed]
 
 const COMP_UI = {
   NBA: { border:'#C49A22', bg:'rgba(196,154,34,.08)', btnBg:'linear-gradient(180deg,#3a2e00,#1a1500)', btnColor:'#F0C040', btnBorder:'#C49A22' },
