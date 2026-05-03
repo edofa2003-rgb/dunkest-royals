@@ -2665,7 +2665,8 @@ function pa_initFirebase() {
     pa_dbRef.on('value', function(snap) {
       if (pa_ignoreNext) { pa_ignoreNext = false; return; }
       var d = snap.val();
-      if (d) {
+      // Only use Firebase data if it has valid riepilogo with at least 1 player
+      if (d && d.riepilogo && Array.isArray(d.riepilogo) && d.riepilogo.length > 0) {
         paData = d;
         pa_render();
         pa_applyGuard();
@@ -2821,7 +2822,8 @@ function pa_initFirebase() {
     pa_dbRef.on('value', function(snap) {
       if (pa_ignoreNext) { pa_ignoreNext = false; return; }
       var d = snap.val();
-      if (d) {
+      // Only use Firebase data if it has valid riepilogo with at least 1 player
+      if (d && d.riepilogo && Array.isArray(d.riepilogo) && d.riepilogo.length > 0) {
         paData = d;
         pa_render();
         pa_applyGuard();
