@@ -2647,7 +2647,7 @@ function p_initFirebase() {
 
 // p_initFirebase viene ora chiamata da initFirebaseCore direttamente
 
-const defaultData = {
+const pDefaultData = {
   riepilogo: [
     { rank:1, nome:"Luca",           anelli:"💍💍💍💍", nba:["","1",""],  gl:["","",""], it:["","",""], pr:["","",""], mit:"", sd:"", mvp:"", dpoy:"", topscorer:"", bd:"", mdt:"" },
     { rank:2, nome:"Edo",            anelli:"💍💍",     nba:["","",""],   gl:["","",""], it:["","",""], pr:["","",""], mit:"", sd:"", mvp:"", dpoy:"", topscorer:"", bd:"", mdt:"" },
@@ -2678,7 +2678,7 @@ let pData = p_loadData();
 function p_loadData() {
   const stored = localStorage.getItem(P_STORAGE_KEY);
   if (stored) { try { return JSON.parse(stored); } catch(e) {} }
-  return JSON.parse(JSON.stringify(defaultData));
+  return JSON.parse(JSON.stringify(pDefaultData));
 }
 
 function p_saveData_inner(triggerRerender) {
@@ -2727,7 +2727,7 @@ function p_saveData_inner(triggerRerender) {
 function p_resetData() {
   if (!confirm('Ripristinare i dati di default?')) return;
   localStorage.removeItem(P_STORAGE_KEY);
-  pData = JSON.parse(JSON.stringify(defaultData));
+  pData = JSON.parse(JSON.stringify(pDefaultData));
   p_render();
   p_showStatus('✦ Ripristinato');
 }
@@ -2761,10 +2761,10 @@ function p_ed(value, path) {
   return `<span contenteditable="true" pData-path="${path}">${value||''}</span>`;
 }
 
-const COMP_COLORS = { NBA:'background:rgba(180,140,10,.35);color:#F0C040', GL:'background:rgba(0,60,180,.4);color:#90c0ff', IT:'background:rgba(0,100,0,.4);color:#90ff90', PR:'background:rgba(120,0,140,.4);color:#d090ff' };
+const P_COMP_COLORS = { NBA:'background:rgba(180,140,10,.35);color:#F0C040', GL:'background:rgba(0,60,180,.4);color:#90c0ff', IT:'background:rgba(0,100,0,.4);color:#90ff90', PR:'background:rgba(120,0,140,.4);color:#d090ff' };
 
 function p_compBadge(comp) {
-  const style = COMP_COLORS[comp] || '';
+  const style = P_COMP_COLORS[comp] || '';
   return `<span class="comp-badge" style="${style}">${comp||''}</span>`;
 }
 
@@ -2833,7 +2833,7 @@ function p_deleteGiocatore(idx) {
   document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){ el.addEventListener('blur', function(){ p_saveData(); }); });
 }
 
-const COMP_UI = {
+const P_COMP_UI = {
   NBA: { border:'#C49A22', bg:'rgba(196,154,34,.08)', btnBg:'linear-gradient(180deg,#3a2e00,#1a1500)', btnColor:'#F0C040', btnBorder:'#C49A22' },
   GL:  { border:'#4080cc', bg:'rgba(0,60,180,.08)',   btnBg:'linear-gradient(180deg,#001a3a,#00102a)', btnColor:'#90c0ff', btnBorder:'#4080cc' },
   IT:  { border:'#00aa00', bg:'rgba(0,100,0,.08)',    btnBg:'linear-gradient(180deg,#001a00,#001200)', btnColor:'#90ff90', btnBorder:'#00aa00' },
@@ -2841,7 +2841,7 @@ const COMP_UI = {
 };
 
 function p_applyCompColors(comp) {
-  const ui = COMP_UI[comp] || COMP_UI.NBA;
+  const ui = P_COMP_UI[comp] || P_COMP_UI.NBA;
   const btn = document.getElementById('btn-add-stagione');
   if (btn) {
     btn.style.background = ui.btnBg;
