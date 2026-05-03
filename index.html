@@ -2295,11 +2295,6 @@ function pa_showStatus(msg) {
   _st = setTimeout(() => s.textContent='', 2500);
 }
 
-function pa_ed(value, path) {
-  return `<span contenteditable="true" data-pa-path="${path}">${value||\'\'}</span>`;
-}
-// REMOVED"${path}">${value||''}</span>`;
-}
 
 const COMP_COLORS = { NBA:'background:rgba(180,140,10,.35);color:#F0C040', GL:'background:rgba(0,60,180,.4);color:#90c0ff', IT:'background:rgba(0,100,0,.4);color:#90ff90', PR:'background:rgba(120,0,140,.4);color:#d090ff' };
 
@@ -2385,7 +2380,7 @@ function pa_switchComp(ev, comp) {
 // Calcola rank al caricamento iniziale
 pa_saveData(false);
 pa_render();
-pa_applyCompColors(activeComp);
+pa_applyCompColors(PA_activeComp);
 </script>
 
 </div>
@@ -2424,7 +2419,13 @@ let paData = pa_loadData();
 
 function pa_loadData() {
   const stored = localStorage.getItem(PA_STORAGE_KEY);
-  if (stored) { try { return JSON.parse(stored); } catch(e) {} }
+  if (stored) {
+    try {
+      const d = JSON.parse(stored);
+      if (d && d.riepilogo && Array.isArray(d.riepilogo) && d.riepilogo.length > 0) return d;
+    } catch(e) {}
+  }
+  // localStorage vuoto o invalido: usa i dati di default
   return JSON.parse(JSON.stringify(PA_defaultData));
 }
 
@@ -2598,10 +2599,6 @@ pa_render();
 pa_applyCompColors(PA_activeComp);
 
 
-}
-
-
-
 
 // ═══════════════════════════════════════════════
 // PALMARES — ADMIN & FIREBASE
@@ -2701,7 +2698,17 @@ pa_saveData = function(triggerRerender) {
 
 // Init Palmares
 (function() {
-  if (typeof pa_saveData === 'function') pa_saveData(false);
+  // Se il localStorage ha dati vuoti, li cancella per usare i default
+  try {
+    var stored = localStorage.getItem(PA_STORAGE_KEY);
+    if (stored) {
+      var d = JSON.parse(stored);
+      if (!d || !d.riepilogo || !d.riepilogo.length) {
+        localStorage.removeItem(PA_STORAGE_KEY);
+        paData = JSON.parse(JSON.stringify(PA_defaultData));
+      }
+    }
+  } catch(e) { localStorage.removeItem(PA_STORAGE_KEY); }
   if (typeof pa_render === 'function') pa_render();
   if (typeof pa_applyCompColors === 'function') pa_applyCompColors(PA_activeComp);
   pa_applyGuard();
