@@ -2614,58 +2614,51 @@ function p_saveData(x) {
   p_saveData_inner(x);
 }
 
-
-function p_applyReadonly() {
-  if (!isAdmin) {
-    document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){
-      el.contentEditable='false'; el.style.cursor='default';
-    });
-    document.querySelectorAll('#sec-palmares .btn-add, #sec-palmares .btn-del').forEach(function(b){
-      b.style.display='none';
-    });
-  }
-}
-
-// Wrap p_render per riaplicare sempre readonly dopo ogni re-render
+// ── ADMIN GUARD ALBO D'ORO ────────────────────────────────────────────
+// Inietta CSS readonly permanente nel document
 (function(){
-  var _origRender = p_render;
-  p_render = function() {
-    _origRender();
-    p_applyReadonly();
-  };
-  var _origRenderR = p_renderRiepilogo;
-  p_renderRiepilogo = function() {
-    _origRenderR();
-    p_applyReadonly();
-  };
-  var _origRenderS = p_renderStagioni;
-  p_renderStagioni = function() {
-    _origRenderS();
-    p_applyReadonly();
-  };
+  var style = document.createElement('style');
+  style.id = 'palm-guard-style';
+  style.textContent =
+    'body:not(.palm-admin) #sec-palmares [contenteditable]' +
+    '{pointer-events:none!important;user-select:none!important;cursor:default!important;outline:none!important}' +
+    'body:not(.palm-admin) #sec-palmares .btn-add,' +
+    'body:not(.palm-admin) #sec-palmares .btn-del' +
+    '{display:none!important;visibility:hidden!important}';
+  document.head.appendChild(style);
 })();
 
-// CSS guard dinamico per non-admin (si aggiorna al login)
-var _palmReadonlyStyle = document.createElement('style');
-_palmReadonlyStyle.id = 'palm-readonly-style';
-_palmReadonlyStyle.textContent = '#sec-palmares [contenteditable]{pointer-events:none!important;user-select:none!important;cursor:default!important}#sec-palmares .btn-add,#sec-palmares .btn-del{display:none!important}';
-document.head.appendChild(_palmReadonlyStyle);
-
 function p_setAdminMode(admin) {
-  var s = document.getElementById('palm-readonly-style');
-  if (s) s.disabled = admin;
   if (admin) {
+    document.body.classList.add('palm-admin');
+    // Abilita contenteditable su tutti i campi esistenti
     document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){
       el.contentEditable = 'true';
-      el.style.cursor = 'text';
     });
-    document.querySelectorAll('#sec-palmares .btn-add, #sec-palmares .btn-del').forEach(function(b){
-      b.style.display = '';
-    });
+    if (typeof p_render === 'function') p_render();
   } else {
-    p_applyReadonly();
+    document.body.classList.remove('palm-admin');
   }
 }
+
+function p_applyReadonly() {
+  // Non serve fare nulla — il CSS body:not(.palm-admin) gestisce tutto
+  if (!isAdmin) {
+    document.querySelectorAll('#sec-palmares [contenteditable]').forEach(function(el){
+      el.contentEditable = 'false';
+    });
+  }
+}
+
+// Wrap render functions per mantenere readonly dopo ogni re-render
+(function(){
+  var _origRender = p_render;
+  p_render = function() { _origRender(); p_applyReadonly(); };
+  var _origR = p_renderRiepilogo;
+  p_renderRiepilogo = function() { _origR(); p_applyReadonly(); };
+  var _origS = p_renderStagioni;
+  p_renderStagioni = function() { _origS(); p_applyReadonly(); };
+})();
 
 
 const P_STORAGE_KEY = 'p_palmares_v2';
@@ -2823,7 +2816,7 @@ function p_renderRiepilogo() {
     const rn = parseInt(r.rank)||0; const rc = rn===1?'rank-1':rn===2?'rank-2':rn===3?'rank-3':'';
     tr.className = rc;
     tr.innerHTML = `
-      <td style="position:relative;font-family:'Cinzel',serif;font-weight:800;text-align:center">${p_ed(r.rank,`riepilogo.${i}.rank`)}<button class="btn-del" onclick="deleteGiocatore(${i})" title="Elimina" style="position:absolute;top:1px;right:1px;font-size:9px">✕</button></td>
+      <td style="position:relative;font-family:'Cinzel',serif;font-weight:800;text-align:center">${p_ed(r.rank,`riepilogo.${i}.rank`)}<button class="btn-del" onclick="p_deleteGiocatore(${i})" title="Elimina" style="position:absolute;top:1px;right:1px;font-size:9px">✕</button></td>
       <td style="text-align:left;font-style:italic">${p_ed(r.nome, `riepilogo.${i}.nome`)}</td>
       <td style="text-align:center;font-size:15px;letter-spacing:2px;color:var(--gold)">${p_ed(r.anelli,`riepilogo.${i}.anelli`)}</td>
       <td>${p_ed(r.nba[1], `riepilogo.${i}.nba.1`)}</td>
@@ -2936,7 +2929,7 @@ function p_renderStagioni() {
     const div = document.createElement('div');
     div.className = 'stagione';
     div.innerHTML = `<table style="border:1px solid ${cp.border};background:${cp.tbg}">
-      <tr><th colspan="2" style="background:${cp.hbg};color:${cp.hcol};font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;text-align:center;padding:8px 10px;border-bottom:1px solid ${cp.border}"><button class="btn-del" onclick="deleteStagione(${i})" title="Elimina">✕</button>${p_ed(s.anno,`stagioni.${i}.anno`)}</th></tr>
+      <tr><th colspan="2" style="background:${cp.hbg};color:${cp.hcol};font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;text-align:center;padding:8px 10px;border-bottom:1px solid ${cp.border}"><button class="btn-del" onclick="p_deleteStagione(${i})" title="Elimina">✕</button>${p_ed(s.anno,`stagioni.${i}.anno`)}</th></tr>
       <tr><th class="s-primo">🥇 Primo</th><td class="s-primo s-val">${p_ed(s.primo,`stagioni.${i}.primo`)}</td></tr>
       ${showRec ? `<tr><td class="s-label">Record</td><td class="s-val">${p_ed(s.primoRec,`stagioni.${i}.primoRec`)}</td></tr>` : ''}
       ${showPt  ? `<tr><td class="s-label">Punti</td><td class="s-val">${p_ed(s.primoPt,`stagioni.${i}.primoPt`)}</td></tr>` : ''}
